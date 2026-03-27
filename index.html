@@ -1,0 +1,354 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>FATES — Taxonomy of Agentic Systems</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300&family=JetBrains+Mono:wght@300;400&display=swap" rel="stylesheet"/>
+<style>
+:root {
+  --bg:#ffffff; --surface:#f2f2f2; --border:rgba(0,0,0,0.09);
+  --node-bg:#f8f8f8; --node-bdr:rgba(0,0,0,0.18); --node-hov:rgba(0, 0, 0, 0.479);
+  --text:#0a0a0a; --muted:rgba(10,10,10,0.36); --accent:#0a0a0a;
+  --edge:rgba(0,0,0,0.35); --glass-bg:rgba(255,255,255,0.88);
+  --glass-bdr:rgba(0,0,0,0.10); --shadow:0 18px 52px rgba(0,0,0,0.08);
+  --ai-node-bg: #dce8f8; --ai-node-bdr: rgba(80,130,200,0.40);
+}
+.dk {
+  --bg:#06080f; --surface:#080d1a; --border:rgba(140,180,255,0.08);
+  --node-bg:#0c1020; --node-bdr:rgba(140,180,255,0.20); --node-hov:rgba(140,180,255,0.32);
+  --text:#dde8ff; --muted:rgba(180,210,255,0.38); --accent:#a8c4ff;
+  --edge:rgba(120,170,255,0.55); --glass-bg:rgba(6,8,15,0.82);
+  --glass-bdr:rgba(120,170,255,0.16); --shadow:0 18px 52px rgba(0,5,30,0.78);
+  --ai-node-bg: rgba(80,130,200,0.18); --ai-node-bdr: rgba(120,170,255,0.32);
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html,body{width:100%;height:100%;overflow:hidden}
+body{background:var(--bg);color:var(--text);font-family:'JetBrains Mono',monospace;font-weight:300;transition:background .5s,color .5s}
+
+header{position:fixed;top:0;left:0;right:0;z-index:100;height:64px;padding:0 36px;display:flex;align-items:center;justify-content:space-between;background:var(--bg);border-bottom:1px solid var(--border);transition:background .5s,border-color .5s}
+.h-title{font-family:'Cormorant Garamond',serif;font-size:1.38rem;font-weight:300;letter-spacing:.2em;text-transform:uppercase;color:var(--text)}
+.h-sub{font-size:.56rem;letter-spacing:.22em;color:var(--muted);text-transform:uppercase;margin-top:2px}
+.h-right{display:flex;align-items:center;gap:22px}
+.authors{text-align:right;font-size:.55rem;letter-spacing:.1em;color:var(--muted);line-height:1.75;text-transform:uppercase}
+.tw{display:flex;align-items:center;gap:8px}
+.tl{font-size:.52rem;letter-spacing:.15em;text-transform:uppercase;color:var(--muted)}
+.toggle{position:relative;width:38px;height:20px;cursor:pointer}
+.toggle input{display:none}
+.t-tr{position:absolute;inset:0;border-radius:20px;border:1px solid var(--node-bdr);background:var(--node-bg);transition:border-color .3s}
+.t-th{position:absolute;top:3px;left:3px;width:12px;height:12px;border-radius:50%;background:var(--muted);transition:transform .3s,background .3s}
+.toggle input:checked~.t-tr{border-color:var(--accent)}
+.toggle input:checked~.t-th{transform:translateX(18px);background:var(--accent)}
+
+#canvas{position:fixed;top:64px;left:0;right:0;bottom:0;overflow:hidden;cursor:grab;user-select:none;-webkit-user-select:none;touch-action:none}
+#canvas.drag{cursor:grabbing}
+#pz{position:absolute;top:0;left:0;transform-origin:0 0;will-change:transform}
+#svg{display:block;overflow:visible}
+
+/* All node rects use CSS custom props so stroke-width is always 1 and uniform */
+.nr{fill:var(--node-bg);stroke:var(--node-bdr);stroke-width:1;cursor:pointer;transition:fill .18s,stroke .18s,stroke-width .18s}
+.nr.root{stroke-width:1.5}
+.nr.ai-node{fill:var(--ai-node-bg);stroke:var(--ai-node-bdr);stroke-width:1}
+.nr:hover,.nr.root:hover{stroke:var(--node-hov);stroke-width:1.5;fill:var(--surface)}
+.nt{fill:var(--text);font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:300;dominant-baseline:middle;text-anchor:middle;pointer-events:none;letter-spacing:.04em}
+.nt.root{font-size:11.5px;letter-spacing:.07em}
+
+/* Tooltip */
+#tooltip{position:fixed;bottom:80px;left:50%;transform:translateX(-50%);background:var(--glass-bg);border:1px solid var(--glass-bdr);border-radius:8px;backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);padding:7px 14px;font-size:.52rem;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);z-index:160;pointer-events:none;opacity:0;transition:opacity .25s;white-space:nowrap}
+#tooltip.show{opacity:1}
+
+#zc{position:fixed;bottom:28px;right:28px;display:flex;align-items:center;gap:2px;background:var(--glass-bg);border:1px solid var(--glass-bdr);border-radius:10px;backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);padding:4px;z-index:150;box-shadow:var(--shadow);transition:background .5s,border-color .5s}
+.zb{width:30px;height:30px;background:none;border:none;cursor:pointer;color:var(--text);font-size:16px;display:flex;align-items:center;justify-content:center;border-radius:6px;transition:background .15s;font-family:inherit;opacity:.6}
+.zb:hover{background:var(--surface);opacity:1}
+#zlvl{font-size:.52rem;letter-spacing:.12em;color:var(--muted);min-width:42px;text-align:center;padding:0 2px}
+
+/* LEGEND — styled to match the image */
+#legend{
+  position:fixed;bottom:28px;left:28px;
+  background:var(--glass-bg);border:1px solid var(--glass-bdr);
+  border-radius:12px;backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);
+  padding:16px 18px 14px;z-index:150;min-width:220px;
+  box-shadow:var(--shadow);transition:background .5s,border-color .5s
+}
+.leg-ttl{font-size:.48rem;letter-spacing:.25em;text-transform:uppercase;color:var(--muted);margin-bottom:13px}
+.leg-row{display:flex;align-items:center;gap:12px;margin-bottom:9px}
+.leg-row:last-of-type{margin-bottom:0}
+
+/* Plain node swatch */
+.leg-swatch{
+  width:54px;height:22px;flex-shrink:0;border-radius:5px;
+  border:1px solid var(--node-bdr);background:var(--node-bg);
+}
+/* Root node swatch */
+.leg-swatch.root{border-width:1.5px;}
+/* AI-ish node swatch — blue tint matching the picture */
+.leg-swatch.ai{
+  background:var(--ai-node-bg);
+  border:1px solid var(--ai-node-bdr);
+}
+
+/* Arrow swatch */
+.leg-arrow{width:54px;height:22px;flex-shrink:0;display:flex;align-items:center;justify-content:center}
+
+.leg-lbl{font-size:.51rem;letter-spacing:.05em;color:var(--text);opacity:.6;line-height:1.5}
+.leg-div{height:1px;background:var(--glass-bdr);margin:10px 0}
+.leg-hint{font-size:.46rem;letter-spacing:.08em;color:var(--muted);line-height:2.1}
+
+/* MODAL */
+#ov{position:fixed;inset:0;background:rgba(0,0,0,.44);backdrop-filter:blur(6px);z-index:200;display:flex;align-items:center;justify-content:center;opacity:0;pointer-events:none;transition:opacity .3s}
+#ov.on{opacity:1;pointer-events:all}
+#modal{position:relative;width:min(650px,92vw);padding:42px 42px 38px;background:var(--glass-bg);border:1px solid var(--glass-bdr);border-radius:16px;backdrop-filter:blur(32px) saturate(1.5);-webkit-backdrop-filter:blur(32px) saturate(1.5);box-shadow:var(--shadow),inset 0 1px 0 rgba(255,255,255,.07);transform:translateY(16px) scale(.97);opacity:0;transition:transform .35s cubic-bezier(.22,1,.36,1),opacity .3s}
+#ov.on #modal{transform:none;opacity:1}
+.m-tag{font-size:.49rem;letter-spacing:.26em;text-transform:uppercase;color:var(--muted);margin-bottom:10px}
+.m-ttl{font-family:'Cormorant Garamond',serif;font-size:1.95rem;font-weight:300;line-height:1.15;color:var(--accent);margin-bottom:20px;letter-spacing:.02em}
+.m-div{width:36px;height:1px;background:var(--glass-bdr);margin-bottom:20px}
+.m-def{font-family:'Cormorant Garamond',serif;font-size:1.5rem;font-weight:300;font-style:italic;line-height:1.78;color:var(--text);opacity:.86}
+.m-x{position:absolute;top:16px;right:16px;width:27px;height:27px;background:none;border:1px solid var(--glass-bdr);border-radius:50%;cursor:pointer;color:var(--muted);font-size:13px;display:flex;align-items:center;justify-content:center;transition:border-color .2s,color .2s;font-family:inherit}
+.m-x:hover{border-color:var(--accent);color:var(--accent)}
+</style>
+</head>
+<body>
+
+<header>
+  <div>
+    <div class="h-title">FATES</div>
+    <div class="h-sub">Taxonomy of Agentic Systems Properties</div>
+  </div>
+  <div class="h-right">
+    <div class="authors">Mohamed Mahdi<br/>Davit Muradyan</div>
+    <div class="tw">
+      <span class="tl" id="tlbl">Light</span>
+      <label class="toggle">
+        <input type="checkbox" id="thm"/>
+        <div class="t-tr"></div>
+        <div class="t-th"></div>
+      </label>
+    </div>
+  </div>
+</header>
+
+<div id="canvas">
+  <div id="pz"><svg id="svg"></svg></div>
+</div>
+
+<div id="tooltip">Click a node to read its definition</div>
+
+<div id="ov">
+  <div id="modal">
+    <button class="m-x" id="mx">&#x2715;</button>
+    <div class="m-tag">Definition</div>
+    <div class="m-ttl" id="mttl"></div>
+    <div class="m-div"></div>
+    <div class="m-def" id="mdef"></div>
+  </div>
+</div>
+
+<div id="legend">
+  <div class="leg-ttl">Legend</div>
+
+  <!-- A → B arrow row -->
+  <div class="leg-row">
+    <div class="leg-arrow">
+      <svg width="54" height="22" viewBox="0 0 54 22" xmlns="http://www.w3.org/2000/svg">
+        <defs>
+          <marker id="la" markerWidth="6" markerHeight="6" refX="5" refY="3" orient="auto">
+            <path d="M0,0 L6,3 L0,6 Z" style="fill:var(--edge)"/>
+          </marker>
+        </defs>
+        <!-- A box -->
+        <rect x="1" y="5" width="16" height="12" rx="3" style="fill:var(--node-bg);stroke:var(--node-bdr)" stroke-width="1"/>
+        <text x="9" y="12" style="fill:var(--text);font-family:'JetBrains Mono',monospace;font-size:7px" dominant-baseline="middle" text-anchor="middle">A</text>
+        <!-- arrow -->
+        <line x1="18" y1="11" x2="34" y2="11" style="stroke:var(--edge)" stroke-width="1" marker-end="url(#la)"/>
+        <!-- B box -->
+        <rect x="36" y="5" width="16" height="12" rx="3" style="fill:var(--node-bg);stroke:var(--node-bdr)" stroke-width="1"/>
+        <text x="44" y="12" style="fill:var(--text);font-family:'JetBrains Mono',monospace;font-size:7px" dominant-baseline="middle" text-anchor="middle">B</text>
+      </svg>
+    </div>
+    <div class="leg-lbl">A → B: B is a<br/>component of A</div>
+  </div>
+
+  <!-- Root concept -->
+  <!-- <div class="leg-row">
+    <div class="leg-swatch root"></div>
+    <div class="leg-lbl">Root concept<br/>top of the taxonomy</div>
+  </div> -->
+
+  <!-- Property node -->
+  <div class="leg-row">
+    <div class="leg-swatch"></div>
+    <div class="leg-lbl">Property node, click<br/>to read its definition</div>
+  </div>
+
+  <!-- AI-Software-ish node -->
+  <!-- <div class="leg-row">
+    <div class="leg-swatch ai"></div>
+    <div class="leg-lbl">A value of an<br/>"AI-Software-ish" System</div>
+  </div> -->
+
+  <div class="leg-div"></div>
+  <div class="leg-hint">Scroll / pinch — zoom<br/>Drag — pan<br/>+ / − / fit — zoom controls</div>
+</div>
+
+<div id="zc">
+  <button class="zb" id="zOut">&#8722;</button>
+  <span id="zlvl">100%</span>
+  <button class="zb" id="zIn">+</button>
+  <button class="zb" id="zFit" style="font-size:10px;letter-spacing:.05em;width:auto;padding:0 9px;opacity:.5">fit</button>
+</div>
+
+<script>
+// THEME
+const thm=document.getElementById('thm'),tlbl=document.getElementById('tlbl');
+thm.addEventListener('change',()=>{document.body.classList.toggle('dk',thm.checked);tlbl.textContent=thm.checked?'Dark':'Light';});
+
+// MODAL
+const ov=document.getElementById('ov'),mttl=document.getElementById('mttl'),mdef=document.getElementById('mdef');
+document.getElementById('mx').addEventListener('click',()=>ov.classList.remove('on'));
+ov.addEventListener('click',e=>{if(e.target===ov)ov.classList.remove('on');});
+document.addEventListener('keydown',e=>{if(e.key==='Escape')ov.classList.remove('on');});
+function openModal(n,d){mttl.textContent=n;mdef.textContent=d;ov.classList.add('on');}
+
+// TOOLTIP hint — show briefly then fade
+const tip=document.getElementById('tooltip');
+setTimeout(()=>tip.classList.add('show'),800);
+setTimeout(()=>tip.classList.remove('show'),3400);
+
+// LAYOUT
+const NW=134,NH=34,HG=30,VG=62;
+function calcW(n){if(!n.children||!n.children.length){n._w=NW;return;}n.children.forEach(calcW);const t=n.children.reduce((s,c)=>s+c._w,0)+HG*(n.children.length-1);n._w=Math.max(NW,t);}
+function place(n,x,y){n._x=x+n._w/2;n._y=y;if(!n.children||!n.children.length)return;const t=n.children.reduce((s,c)=>s+c._w,0)+HG*(n.children.length-1);let cx=x+(n._w-t)/2;for(const c of n.children){place(c,cx,y+NH+VG);cx+=c._w+HG;}}
+function flat(n,a=[]){a.push(n);(n.children||[]).forEach(c=>flat(c,a));return a;}
+function edgs(n,a=[]){(n.children||[]).forEach(c=>{a.push({p:n,c});edgs(c,a);});return a;}
+
+// SVG
+const NS='http://www.w3.org/2000/svg';
+function mk(tag,a){const e=document.createElementNS(NS,tag);Object.entries(a).forEach(([k,v])=>e.setAttribute(k,v));return e;}
+
+// RENDER
+let TW,TH;
+function renderTree(data){
+  calcW(data);place(data,0,0);
+  const nodes=flat(data),edges=edgs(data);
+  const PAD=48;
+  const minX=Math.min(...nodes.map(n=>n._x-NW/2));
+  const maxX=Math.max(...nodes.map(n=>n._x+NW/2));
+  const maxY=Math.max(...nodes.map(n=>n._y+NH));
+  TW=maxX-minX+PAD*2; TH=maxY+PAD*2;
+  const ox=PAD-minX,oy=PAD;
+
+  const svg=document.getElementById('svg');
+  svg.setAttribute('width',TW);svg.setAttribute('height',TH);
+  svg.setAttribute('viewBox',`0 0 ${TW} ${TH}`);
+  svg.innerHTML='';
+
+  // Single arrowhead marker — uniform size
+  const defs=mk('defs',{});
+  const mkr=mk('marker',{id:'ah',markerWidth:'6',markerHeight:'6',refX:'5',refY:'3',orient:'auto'});
+  mkr.appendChild(mk('path',{d:'M0,0 L6,3 L0,6 Z',style:'fill:var(--edge)'}));
+  defs.appendChild(mkr);svg.appendChild(defs);
+
+  // Edges — shared-stem approach to avoid overlapping strokes that appear thicker.
+  // For each parent: draw ONE vertical stem down to the bus row, ONE horizontal bus
+  // spanning all children, then ONE short vertical drop per child with arrowhead.
+  const eg=mk('g',{'fill':'none','stroke':'var(--edge)','stroke-width':'1','stroke-linecap':'round','stroke-linejoin':'round'});
+
+  // Group edges by parent
+  const byParent=new Map();
+  for(const{p,c}of edges){
+    if(!byParent.has(p))byParent.set(p,[]);
+    byParent.get(p).push(c);
+  }
+
+  for(const[p,children]of byParent){
+    const px=p._x+ox;
+    const py=p._y+oy+NH;
+    // bus row y — halfway between parent bottom and children top
+    const childY=children[0]._y+oy; // all siblings share the same y level
+    const my=py+(childY-py)/2;
+
+    // 1. Vertical stem from parent bottom down to bus row
+    eg.appendChild(mk('line',{x1:px,y1:py,x2:px,y2:my}));
+
+    if(children.length===1){
+      // Only one child — straight vertical drop with arrow, no bus needed
+      const cx=children[0]._x+ox;
+      const cy=children[0]._y+oy;
+      if(cx!==px){
+        // different x: horizontal jog then drop
+        eg.appendChild(mk('line',{x1:px,y1:my,x2:cx,y2:my}));
+      }
+      eg.appendChild(mk('line',{x1:cx,y1:my,x2:cx,y2:cy-6,'marker-end':'url(#ah)'}));
+    } else {
+      // 2. Horizontal bus from leftmost to rightmost child
+      const xs=children.map(c=>c._x+ox);
+      const busL=Math.min(...xs),busR=Math.max(...xs);
+      eg.appendChild(mk('line',{x1:busL,y1:my,x2:busR,y2:my}));
+
+      // 3. Short vertical drop per child with arrowhead
+      for(const c of children){
+        const cx=c._x+ox,cy=c._y+oy;
+        eg.appendChild(mk('line',{x1:cx,y1:my,x2:cx,y2:cy-6,'marker-end':'url(#ah)'}));
+      }
+    }
+  }
+  svg.appendChild(eg);
+
+  // Nodes
+  const ng=mk('g',{});
+  for(const node of nodes){
+    const nx=node._x+ox,ny=node._y+oy,isRoot=node===data;
+    const isAI=node.aiNode===true;
+    const g=mk('g',{transform:`translate(${nx-NW/2},${ny})`});
+    g.style.cursor='pointer';
+
+    let cls='nr';
+    if(isRoot) cls+=' root';
+    if(isAI)   cls+=' ai-node';
+
+    const rect=mk('rect',{class:cls,x:0,y:0,width:NW,height:NH,rx:6});
+
+    const words=node.name.split(' ');
+    let lines=[],cur='';
+    for(const w of words){const t=cur?`${cur} ${w}`:w;if(t.length>17&&cur){lines.push(cur);cur=w;}else cur=t;}
+    if(cur)lines.push(cur);
+    const txt=mk('text',{class:isRoot?'nt root':'nt',x:NW/2,y:lines.length>1?NH/2-7:NH/2});
+    if(lines.length===1){txt.textContent=lines[0];}
+    else{lines.forEach((ln,i)=>{const ts=mk('tspan',{x:NW/2,dy:i===0?'0':'14'});ts.textContent=ln;txt.appendChild(ts);});}
+
+    g.appendChild(rect);g.appendChild(txt);
+    g.addEventListener('click',()=>{if(!wasDrag)openModal(node.name,node.definition||'No definition available.');});
+    ng.appendChild(g);
+  }
+  svg.appendChild(ng);
+  fitView();
+}
+
+// PAN + ZOOM
+const canvas=document.getElementById('canvas'),pz=document.getElementById('pz'),zlvl=document.getElementById('zlvl');
+let scale=1,tx=0,ty=0,dragging=false,wasDrag=false,lx=0,ly=0;
+const SMIN=0.05,SMAX=12;
+function applyT(){pz.style.transform=`translate(${tx}px,${ty}px) scale(${scale})`;zlvl.textContent=Math.round(scale*100)+'%';}
+function fitView(){if(!TW||!TH)return;const vw=canvas.clientWidth,vh=canvas.clientHeight,p=56;const s=Math.min((vw-p*2)/TW,(vh-p*2)/TH,1.2);scale=s;tx=(vw-TW*s)/2;ty=(vh-TH*s)/2;applyT();}
+function zoomAt(cx,cy,f){const ns=Math.min(SMAX,Math.max(SMIN,scale*f)),r=ns/scale;tx=cx-r*(cx-tx);ty=cy-r*(cy-ty);scale=ns;applyT();}
+
+canvas.addEventListener('wheel',e=>{e.preventDefault();const r=canvas.getBoundingClientRect();zoomAt(e.clientX-r.left,e.clientY-r.top,e.deltaY<0?1.12:1/1.12);},{passive:false});
+canvas.addEventListener('mousedown',e=>{dragging=true;wasDrag=false;lx=e.clientX;ly=e.clientY;canvas.classList.add('drag');});
+window.addEventListener('mousemove',e=>{if(!dragging)return;const dx=e.clientX-lx,dy=e.clientY-ly;if(Math.abs(dx)+Math.abs(dy)>3)wasDrag=true;tx+=dx;ty+=dy;lx=e.clientX;ly=e.clientY;applyT();});
+window.addEventListener('mouseup',()=>{dragging=false;canvas.classList.remove('drag');});
+
+let touches={},ld=null,lm=null;
+canvas.addEventListener('touchstart',e=>{e.preventDefault();Array.from(e.changedTouches).forEach(t=>{touches[t.identifier]={x:t.clientX,y:t.clientY};});if(Object.keys(touches).length===1){const t=e.changedTouches[0];lx=t.clientX;ly=t.clientY;wasDrag=false;}},{passive:false});
+canvas.addEventListener('touchmove',e=>{e.preventDefault();const cur={...touches};Array.from(e.changedTouches).forEach(t=>{cur[t.identifier]={x:t.clientX,y:t.clientY};});const pts=Object.values(cur);const r=canvas.getBoundingClientRect();if(pts.length>=2){const[a,b]=pts;const dist=Math.hypot(b.x-a.x,b.y-a.y);const mid={x:(a.x+b.x)/2,y:(a.y+b.y)/2};if(ld!==null){zoomAt(mid.x-r.left,mid.y-r.top,dist/ld);if(lm){tx+=mid.x-lm.x;ty+=mid.y-lm.y;applyT();}}ld=dist;lm=mid;}else if(pts.length===1){const t=e.changedTouches[0];const dx=t.clientX-lx,dy=t.clientY-ly;if(Math.abs(dx)+Math.abs(dy)>3)wasDrag=true;tx+=dx;ty+=dy;lx=t.clientX;ly=t.clientY;applyT();}Array.from(e.changedTouches).forEach(t=>{touches[t.identifier]={x:t.clientX,y:t.clientY};});},{passive:false});
+canvas.addEventListener('touchend',e=>{Array.from(e.changedTouches).forEach(t=>{delete touches[t.identifier];});if(Object.keys(touches).length<2){ld=null;lm=null;}},{passive:false});
+
+document.getElementById('zIn').addEventListener('click',()=>{const r=canvas.getBoundingClientRect();zoomAt(r.width/2,r.height/2,1.25);});
+document.getElementById('zOut').addEventListener('click',()=>{const r=canvas.getBoundingClientRect();zoomAt(r.width/2,r.height/2,1/1.25);});
+document.getElementById('zFit').addEventListener('click',fitView);
+window.addEventListener('resize',fitView);
+
+fetch('data.json').then(r=>r.json()).then(renderTree).catch(()=>{document.getElementById('canvas').innerHTML='<p style="color:var(--muted);padding:60px;font-size:.75rem;letter-spacing:.1em">Could not load data.json — place it in the same directory as index.html.</p>';});
+</script>
+</body>
+</html>

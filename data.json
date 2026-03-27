@@ -1,0 +1,167 @@
+{
+  "id": "machine-ethics",
+  "name": "Machine Ethics",
+  "definition": "The field of AI research and philosophy concerned with adding ethical reasoning and moral constraints to autonomous agents. Machine Ethics seeks to ensure that AI systems behave in ways that are safe, fair, accountable, and aligned with human values.",
+  "children": [
+    {
+      "id": "trustworthiness",
+      "name": "Trustworthiness",
+      "definition": "The overall property of an AI system that makes it deserving of trust. A trustworthy system reliably acts in accordance with its stated objectives and the expectations of its users, combining both truthfulness and consistent reproducible behavior.",
+      "children": [
+        {
+          "id": "trustfulness",
+          "name": "Trustfulness",
+          "definition": "The degree to which an AI system produces outputs that are truthful, honest, and free from deceptive content. A trustful system does not mislead its users intentionally or unintentionally.",
+          "children": [
+            {
+              "id": "hallucinations",
+              "name": "Hallucinations",
+              "definition": "The phenomenon where an AI system generates content that is factually incorrect, fabricated, or not grounded in its training data or provided context. Minimizing hallucinations is a key challenge in building trustful AI systems.",
+              "children": [
+                {
+                  "id": "sycophancy",
+                  "name": "Sycophancy",
+                  "definition": "A behavioral pattern in AI systems where the model produces responses that are agreeable, flattering, or aligned with perceived user preferences rather than with factual accuracy or honest assessment. Sycophantic systems tell users what they want to hear.",
+                  "children": []
+                },
+                {
+                  "id": "honesty",
+                  "name": "Honesty",
+                  "definition": "The property of an AI system to provide information that is accurate, unbiased, and transparent about its own uncertainty or limitations. An honest system does not assert things it does not 'believe' to be true.",
+                  "children": [
+                    {
+                      "id": "correctness",
+                      "name": "Correctness",
+                      "definition": "The degree to which the factual claims and reasoning steps produced by an AI system are accurate and free of errors. Correctness measures the alignment between system outputs and ground truth.",
+                      "children": []
+                    },
+                    {
+                      "id": "calibration",
+                      "name": "Calibration",
+                      "definition": "The alignment between an AI system's expressed confidence in its outputs and the actual accuracy of those outputs. A well-calibrated system is uncertain when it should be and confident when evidence supports it.",
+                      "children": [
+                        {
+                          "id": "confidence",
+                          "name": "Confidence",
+                          "definition": "The degree of certainty an AI system expresses about its outputs. Properly managed confidence enables users to gauge the reliability of information and make informed decisions based on AI-generated content.",
+                          "children": []
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "id": "prompt-quality-awareness",
+                  "name": "Prompt Quality Awareness",
+                  "definition": "The ability of an AI system to recognize the quality, ambiguity, or potential issues in the prompts it receives, and to adjust its responses accordingly — for instance, seeking clarification rather than hallucinating an answer to an unclear query.",
+                  "children": [
+                    {
+                      "id": "robustness",
+                      "name": "Robustness",
+                      "definition": "The capacity of an AI system to maintain reliable, accurate, and safe behavior across a wide range of input conditions, including adversarial prompts, out-of-distribution queries, noisy data, and edge cases.",
+                      "children": []
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "reproducibility",
+          "name": "Reproducibility",
+          "definition": "The property of an AI system that ensures consistent outputs given the same or equivalent inputs. Reproducibility is essential for scientific validation, debugging, and user trust in agentic systems.",
+          "children": [
+            {
+              "id": "security",
+              "name": "Security",
+              "definition": "The set of properties ensuring that an AI system resists unauthorized access, manipulation, adversarial attacks, and misuse. Security encompasses both the integrity of the model and the protection of its users.",
+              "children": [
+                {
+                  "id": "explainability",
+                  "name": "Explainability",
+                  "definition": "The ability of an AI system to provide human-understandable reasons or justifications for its outputs and decisions. Explainability is critical for user trust, debugging, and regulatory compliance.",
+                  "children": []
+                },
+                {
+                  "id": "privacy",
+                  "name": "Privacy",
+                  "definition": "The property of an AI system that ensures it handles personal and sensitive data responsibly, does not leak private information, and respects user confidentiality in its inputs, outputs, and internal processes.",
+                  "children": []
+                },
+                {
+                  "id": "traceability",
+                  "name": "Traceability",
+                  "definition": "The ability to track, log, and audit the inputs, decisions, and outputs of an AI system throughout its operation. Traceability enables post-hoc accountability and supports debugging and compliance.",
+                  "children": []
+                }
+              ]
+            },
+            {
+              "id": "reliability",
+              "name": "Reliability",
+              "definition": "The degree to which an AI system consistently performs its intended function correctly over time and across diverse conditions. A reliable system fails gracefully and predictably when pushed beyond its limits.",
+              "children": []
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "accountability",
+      "name": "Accountability",
+      "definition": "The property that ensures AI systems and their developers or operators can be held responsible for the system's actions and outcomes. Accountability requires transparency, auditability, and clear lines of responsibility.",
+      "children": []
+    },
+    {
+      "id": "performance",
+      "name": "Performance",
+      "definition": "The aggregate of technical quality metrics that determine how efficiently and effectively an AI system executes its tasks. Performance covers computational and resource dimensions of AI system operation.",
+      "children": [
+        {
+          "id": "latency",
+          "name": "Latency",
+          "definition": "The time elapsed between an input being submitted to an AI system and the corresponding output being delivered. Low latency is critical for real-time and interactive agentic applications.",
+          "children": []
+        },
+        {
+          "id": "energy-consumption",
+          "name": "Energy Consumption",
+          "definition": "The amount of electrical energy required to train, run, or fine-tune an AI system. Energy consumption is increasingly important for sustainability and cost considerations in large-scale AI deployments.",
+          "children": []
+        },
+        {
+          "id": "cost",
+          "name": "Cost",
+          "definition": "The total financial resources required to develop, train, deploy, and maintain an AI system. Cost analysis includes compute, data acquisition, human labor for annotation, and operational infrastructure.",
+          "children": []
+        }
+      ]
+    },
+    {
+      "id": "safety",
+      "name": "Safety",
+      "definition": "The property of an AI system that ensures it does not cause unintended harm to users, third parties, or society at large. Safety encompasses both preventing dangerous outputs and ensuring the system can be corrected or shut down.",
+      "children": [
+        {
+          "id": "sustainability",
+          "name": "Sustainability",
+          "definition": "The ability of an AI system to operate and remain beneficial over the long term without depleting resources, causing environmental harm, or undermining the social and institutional structures it depends upon.",
+          "children": []
+        },
+        {
+          "id": "maintainability",
+          "name": "Maintainability",
+          "definition": "The ease with which an AI system can be updated, corrected, extended, or retrained over time. A maintainable system supports iterative improvement and adaptation to changing requirements or environments.",
+          "children": []
+        }
+      ]
+    },
+    {
+      "id": "fairness",
+      "name": "Fairness",
+      "definition": "The property that an AI system treats all individuals and groups equitably, without unjust discrimination based on attributes such as race, gender, age, or socioeconomic status. Fairness requires both technical mitigation of bias and normative alignment with social justice principles.",
+      "children": []
+    }
+  ]
+}
