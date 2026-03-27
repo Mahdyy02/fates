@@ -6,7 +6,7 @@ Welcome to FATES Properties collection project.
 
 We're building **the definitive taxonomy of AI agent properties**. Think of it as a living, breathing map of every characteristic, behavior, and capability that defines how AI systems work and what they mean for humanity.
 
-From trustworthiness to hallucinations, from calibration to honesty, FATES captures the entire spectrum of properties that matter when we talk about intelligent agents. It's not just a list. It's an interconnected web of concepts, properties, and relationships that help us understand the DNA of AI systems.
+From trustworthiness to hallucinations, from calibration to honesty, FATES captures the entire spectrum of properties that matter when we talk about intelligent agents. It's an interconnected web of concepts, properties, and relationships that help us understand the DNA of AI systems.
 
 ## Why FATES?
 
