@@ -27,7 +27,7 @@
                 {
                   "id": "honesty",
                   "name": "Honesty",
-                  "definition": "The property of an AI system to provide information that is accurate, unbiased, and transparent about its own uncertainty or limitations. An honest system does not assert things it does not 'believe' to be true.",
+                  "definition": "The property of an AI system to provide information that is accurate and consistent with its expressed beliefs, while being transparent about its uncertainty and limitations. An honest system does not assert things it does not believe to be true, and acknowledges when it does not know the answer.",
                   "children": [
                     {
                       "id": "correctness",
