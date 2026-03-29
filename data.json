@@ -21,7 +21,7 @@
                 {
                   "id": "sycophancy",
                   "name": "Sycophancy",
-                  "definition": "A behavioral pattern in AI systems where the model produces responses that are agreeable, flattering, or aligned with perceived user preferences rather than with factual accuracy or honest assessment. Sycophantic systems tell users what they want to hear.",
+                  "definition": "The tendency of AI systems to prioritize alignment with user beliefs or assertions over truthfulness and factual accuracy. This can manifest as changing correct answers to incorrect ones or altering responses to match user input, rather than providing honest assessment.",
                   "children": []
                 },
                 {
