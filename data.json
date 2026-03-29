@@ -43,7 +43,7 @@
                         {
                           "id": "confidence",
                           "name": "Confidence",
-                          "definition": "The degree of certainty an AI system expresses about its outputs. Properly managed confidence enables users to gauge the reliability of information and make informed decisions based on AI-generated content.",
+                          "definition": "The degree of certainty or assurance that a predictive system expresses about its outputs or decisions.",
                           "children": []
                         }
                       ]
