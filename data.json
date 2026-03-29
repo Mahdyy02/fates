@@ -58,7 +58,7 @@
                     {
                       "id": "robustness",
                       "name": "Robustness",
-                      "definition": "The capacity of an AI system to maintain reliable, accurate, and safe behavior across a wide range of input conditions, including adversarial prompts, out-of-distribution queries, noisy data, and edge cases.",
+                      "definition": "The ability of an AI system to maintain its level of performance and generate accurate responses across a wide range of input conditions, including natural language perturbations, erroneous or noisy inputs, out-of-distribution queries, execution errors, and unseen data.",
                       "children": []
                     }
                   ]
